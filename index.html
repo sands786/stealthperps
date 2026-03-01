@@ -173,7 +173,7 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 .tab-it{padding:12px 16px;font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;transition:all 0.2s;white-space:nowrap}
 .tab-it.on{color:var(--neon-cyan);border-bottom-color:var(--neon-cyan);text-shadow:0 0 10px rgba(0,212,255,0.5)}
 .tab-it:hover{color:var(--text)}
-.pos-content{padding:16px}
+.pos-content{padding:16px;min-height:120px}
 .pos-table{width:100%;border-collapse:collapse}
 .pos-table th{font-size:10px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;padding:10px 12px;text-align:left;border-bottom:1px solid var(--border);font-weight:600;white-space:nowrap}
 .pos-table td{padding:12px;border-bottom:1px solid var(--border);font-size:12px;white-space:nowrap}
@@ -402,14 +402,14 @@ canvas{display:block;width:100%}
       <div class="ig">
         <div class="ilabel">Size</div>
         <div class="irow">
-          <input class="ifield" id="sizeInput" type="number" placeholder="0.00" oninput="recalc()"/>
+          <input class="ifield" id="sizeInput" type="number" placeholder="0.00" step="0.01" oninput="recalc()"/>
           <div class="isuf" id="baseAssetLabel">SOL</div>
         </div>
       </div>
       <div class="ig" id="priceGroup" style="display:none">
         <div class="ilabel" id="priceLabel">Limit Price</div>
         <div class="irow">
-          <input class="ifield" id="priceInput" type="number" placeholder="0.00" oninput="recalc()"/>
+          <input class="ifield" id="priceInput" type="number" placeholder="0.00" step="0.01" oninput="recalc()"/>
           <div class="isuf">USD</div>
         </div>
       </div>
@@ -557,7 +557,7 @@ canvas{display:block;width:100%}
     <div class="profile-role">Crypto Trader & DeFi Enthusiast</div>
     
     <div class="social-links">
-      <a href="https://twitter.com/husnain50376345 " target="_blank" class="social-link twitter">
+      <a href="https://twitter.com/husnain50376345" target="_blank" class="social-link twitter">
         <div class="social-icon">🐦</div>
         <div class="social-info">
           <div class="social-label">Twitter / X</div>
@@ -566,7 +566,7 @@ canvas{display:block;width:100%}
         <div class="social-arrow">→</div>
       </a>
       
-      <a href="https://discord.com/users/shah0406 " target="_blank" class="social-link discord">
+      <a href="https://discord.com/users/shah0406" target="_blank" class="social-link discord">
         <div class="social-icon">💬</div>
         <div class="social-info">
           <div class="social-label">Discord</div>
@@ -591,10 +591,22 @@ canvas{display:block;width:100%}
 <div id="toast"></div>
 
 <script>
+// ═══════════════════════════════════════════════════════════════════════════
+// STEALTHPERPS - FIXED VERSION
+// Position creation now properly adds to state.positions array
+// ═══════════════════════════════════════════════════════════════════════════
+
 // ─── AUDIO CONTEXT FOR SOUND EFFECTS ───────────────────────────────────────
-const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+let audioCtx = null;
+
+function initAudio() {
+  if (!audioCtx) {
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  }
+}
 
 function playSound(type) {
+  initAudio();
   if (audioCtx.state === 'suspended') audioCtx.resume();
   const osc = audioCtx.createOscillator();
   const gain = audioCtx.createGain();
@@ -627,7 +639,7 @@ function playSound(type) {
 }
 
 // ─── STATE ─────────────────────────────────────────────────────────────────
-let state = {
+const state = {
   market: 'SOL-PERP',
   side: 'long',
   orderType: 'Market',
@@ -636,8 +648,8 @@ let state = {
   activeTf: '15m',
   posTab: 'Positions',
   positions: [
-    {id:1,market:'SOL-PERP',side:'long',size:10,entry:182.3,mark:186.42,lev:10,pnl:41.2,pct:2.26},
-    {id:2,market:'BTC-PERP',side:'short',size:0.05,entry:67200,mark:66850,lev:5,pnl:17.5,pct:0.52},
+    {id:1, market:'SOL-PERP', side:'long', size:10, entry:182.3, mark:186.42, lev:10, pnl:41.2, pct:2.26},
+    {id:2, market:'BTC-PERP', side:'short', size:0.05, entry:67200, mark:66850, lev:5, pnl:17.5, pct:0.52},
   ],
   candles: [],
   price: 186.42,
@@ -647,33 +659,33 @@ let state = {
 };
 
 const COINS = {
-  'SOL-PERP': {name:'SOL',price:186.42,change:1.24,icon:'S',color:'linear-gradient(135deg,#9945FF,#14F195)',oi:'$24.3M',vol:'$187.6M',funding:'+0.0104%'},
-  'BONK-PERP': {name:'BONK',price:0.000028,change:5.67,icon:'B',color:'linear-gradient(135deg,#F2A900,#FF6B00)',oi:'$8.2M',vol:'$45.1M',funding:'+0.0089%'},
-  'RAY-PERP': {name:'RAY',price:2.45,change:-2.13,icon:'R',color:'linear-gradient(135deg,#00C6FF,#0072FF)',oi:'$3.1M',vol:'$12.4M',funding:'-0.0021%'},
-  'ORCA-PERP': {name:'ORCA',price:4.82,change:3.45,icon:'O',color:'linear-gradient(135deg,#00D4AA,#008080)',oi:'$1.8M',vol:'$6.7M',funding:'+0.0056%'},
-  'PYTH-PERP': {name:'PYTH',price:0.58,change:-1.23,icon:'P',color:'linear-gradient(135deg,#FF6B6B,#4ECDC4)',oi:'$5.4M',vol:'$23.8M',funding:'+0.0034%'},
-  'JTO-PERP': {name:'JTO',price:3.24,change:8.91,icon:'J',color:'linear-gradient(135deg,#FF006E,#8338EC)',oi:'$2.7M',vol:'$9.3M',funding:'+0.0123%'},
-  'BTC-PERP': {name:'BTC',price:67200,change:0.85,icon:'₿',color:'linear-gradient(135deg,#F7931A,#FFD700)',oi:'$145.2M',vol:'$892.1M',funding:'+0.0078%'},
-  'ETH-PERP': {name:'ETH',price:3520,change:-0.34,icon:'Ξ',color:'linear-gradient(135deg,#627EEA,#8C9EFF)',oi:'$98.5M',vol:'$567.3M',funding:'+0.0065%'},
-  'JUP-PERP': {name:'JUP',price:1.15,change:12.45,icon:'J',color:'linear-gradient(135deg,#FF6B35,#F7931A)',oi:'$12.8M',vol:'$78.4M',funding:'+0.0156%'}
+  'SOL-PERP': {name:'SOL', price:186.42, change:1.24, icon:'S', color:'linear-gradient(135deg,#9945FF,#14F195)', oi:'$24.3M', vol:'$187.6M', funding:'+0.0104%'},
+  'BONK-PERP': {name:'BONK', price:0.000028, change:5.67, icon:'B', color:'linear-gradient(135deg,#F2A900,#FF6B00)', oi:'$8.2M', vol:'$45.1M', funding:'+0.0089%'},
+  'RAY-PERP': {name:'RAY', price:2.45, change:-2.13, icon:'R', color:'linear-gradient(135deg,#00C6FF,#0072FF)', oi:'$3.1M', vol:'$12.4M', funding:'-0.0021%'},
+  'ORCA-PERP': {name:'ORCA', price:4.82, change:3.45, icon:'O', color:'linear-gradient(135deg,#00D4AA,#008080)', oi:'$1.8M', vol:'$6.7M', funding:'+0.0056%'},
+  'PYTH-PERP': {name:'PYTH', price:0.58, change:-1.23, icon:'P', color:'linear-gradient(135deg,#FF6B6B,#4ECDC4)', oi:'$5.4M', vol:'$23.8M', funding:'+0.0034%'},
+  'JTO-PERP': {name:'JTO', price:3.24, change:8.91, icon:'J', color:'linear-gradient(135deg,#FF006E,#8338EC)', oi:'$2.7M', vol:'$9.3M', funding:'+0.0123%'},
+  'BTC-PERP': {name:'BTC', price:67200, change:0.85, icon:'₿', color:'linear-gradient(135deg,#F7931A,#FFD700)', oi:'$145.2M', vol:'$892.1M', funding:'+0.0078%'},
+  'ETH-PERP': {name:'ETH', price:3520, change:-0.34, icon:'Ξ', color:'linear-gradient(135deg,#627EEA,#8C9EFF)', oi:'$98.5M', vol:'$567.3M', funding:'+0.0065%'},
+  'JUP-PERP': {name:'JUP', price:1.15, change:12.45, icon:'J', color:'linear-gradient(135deg,#FF6B35,#F7931A)', oi:'$12.8M', vol:'$78.4M', funding:'+0.0156%'}
 };
 
 const MARKETS = Object.keys(COINS);
-const LEVERAGES = [2,5,10,20,50];
-const OT = ['Market','Limit','Stop'];
-const TFS = ['1m','5m','15m','1h','4h','1D'];
-const POS_TABS = ['Positions','Open Orders','Trade History'];
+const LEVERAGES = [2, 5, 10, 20, 50];
+const OT = ['Market', 'Limit', 'Stop'];
+const TFS = ['1m', '5m', '15m', '1h', '4h', '1D'];
+const POS_TABS = ['Positions', 'Open Orders', 'Trade History'];
 const CIRCUIT_STEPS = [
-  {ico:'01',label:'Order Input',detail:'Encrypted client-side',cls:'enc'},
-  {ico:'02',label:'Arcium MXE',detail:'Multi-party secure compute',cls:'cmp'},
-  {ico:'03',label:'Solana Program',detail:'Proof verified on-chain',cls:'cmp'},
-  {ico:'04',label:'PnL Reveal',detail:'Only settlement disclosed',cls:'rev'},
+  {ico:'01', label:'Order Input', detail:'Encrypted client-side', cls:'enc'},
+  {ico:'02', label:'Arcium MXE', detail:'Multi-party secure compute', cls:'cmp'},
+  {ico:'03', label:'Solana Program', detail:'Proof verified on-chain', cls:'cmp'},
+  {ico:'04', label:'PnL Reveal', detail:'Only settlement disclosed', cls:'rev'},
 ];
 
 const THEMES = {
-  cyberpunk: {cyan:'#00D4FF',pink:'#ff00ff',lime:'#39ff14',purple:'#b829dd'},
-  matrix: {cyan:'#00ff00',pink:'#00ff41',lime:'#39ff14',purple:'#008f11'},
-  sunset: {cyan:'#ff6b6b',pink:'#feca57',lime:'#ff9ff3',purple:'#54a0ff'}
+  cyberpunk: {cyan:'#00D4FF', pink:'#ff00ff', lime:'#39ff14', purple:'#b829dd'},
+  matrix: {cyan:'#00ff00', pink:'#00ff41', lime:'#39ff14', purple:'#008f11'},
+  sunset: {cyan:'#ff6b6b', pink:'#feca57', lime:'#ff9ff3', purple:'#54a0ff'}
 };
 
 // ─── INIT ─────────────────────────────────────────────────────────────────
@@ -691,6 +703,7 @@ function init() {
   updatePnL();
   loadAlerts();
   
+  // Start intervals
   setInterval(() => {
     tickPrice();
     renderOB();
@@ -698,11 +711,15 @@ function init() {
     updateCoinPrices();
     checkPriceAlerts();
   }, 1200);
+  
   setInterval(tickCircuit, 1800);
   setInterval(simulateConnection, 5000);
   
   // Keyboard shortcuts
   document.addEventListener('keydown', handleKeyboard);
+  
+  // Initialize audio on first user interaction
+  document.addEventListener('click', initAudio, {once:true});
 }
 
 // ─── PARTICLES ─────────────────────────────────────────────────────────────
@@ -753,12 +770,14 @@ function handleKeyboard(e) {
 
 // ─── PnL WIDGET ────────────────────────────────────────────────────────────
 function updatePnL() {
-  const total = state.positions.reduce((sum, p) => {
+  let total = 0;
+  state.positions.forEach(p => {
     const currentPnl = p.side === 'long' 
       ? (p.mark - p.entry) * p.size 
       : (p.entry - p.mark) * p.size;
-    return sum + currentPnl;
-  }, 0);
+    total += currentPnl;
+  });
+  
   const el = document.getElementById('pnlTotal');
   el.textContent = (total >= 0 ? '+' : '') + '$' + total.toFixed(2);
   el.className = 'pnl-total ' + (total >= 0 ? 'positive' : 'negative');
@@ -783,21 +802,29 @@ function updateImbalance() {
 
 // ─── PRICE ALERTS ───────────────────────────────────────────────────────────
 function loadAlerts() {
-  const saved = localStorage.getItem('stealthAlerts');
-  if (saved) state.alerts = JSON.parse(saved);
+  try {
+    const saved = localStorage.getItem('stealthAlerts');
+    if (saved) state.alerts = JSON.parse(saved);
+  } catch(e) {
+    console.log('localStorage not available');
+  }
   renderAlerts();
 }
 
 function saveAlerts() {
-  localStorage.setItem('stealthAlerts', JSON.stringify(state.alerts));
+  try {
+    localStorage.setItem('stealthAlerts', JSON.stringify(state.alerts));
+  } catch(e) {
+    console.log('localStorage not available');
+  }
 }
 
 function addAlert() {
   const input = document.getElementById('alertPrice');
   const price = parseFloat(input.value);
-  if (!price) return;
+  if (!price || price <= 0) return;
   
-  state.alerts.push({id:Date.now(),price,market:state.market,triggered:false});
+  state.alerts.push({id: Date.now(), price, market: state.market, triggered: false});
   input.value = '';
   saveAlerts();
   renderAlerts();
@@ -813,10 +840,13 @@ function removeAlert(id) {
 
 function renderAlerts() {
   const el = document.getElementById('alertList');
-  if (!state.alerts.length) {el.innerHTML='';return;}
+  if (!state.alerts.length) {
+    el.innerHTML = '';
+    return;
+  }
   
   el.innerHTML = state.alerts.map(a => `
-    <div class="alert-item ${a.triggered?'triggered':'active'}">
+    <div class="alert-item ${a.triggered ? 'triggered' : 'active'}">
       <span>${a.market} @ $${a.price}</span>
       <button class="alert-remove" onclick="removeAlert(${a.id})">×</button>
     </div>
@@ -843,14 +873,15 @@ function renderCoinGrid() {
   el.innerHTML = MARKETS.map(m => {
     const coin = COINS[m];
     const isUp = coin.change >= 0;
+    const priceStr = coin.price < 1 ? coin.price.toFixed(6) : coin.price.toLocaleString();
     return `
-      <div class="coin-card${m===state.market?' on':''}" onclick="setMarket('${m}')">
+      <div class="coin-card${m === state.market ? ' on' : ''}" onclick="setMarket('${m}')">
         <div class="coin-header">
           <div class="coin-icon" style="background:${coin.color}">${coin.icon}</div>
           <div class="coin-name">${coin.name}</div>
         </div>
-        <div class="coin-price" style="color:${isUp?'#39ff14':'#ff00ff'}">$${coin.price < 1 ? coin.price.toFixed(6) : coin.price.toLocaleString()}</div>
-        <div class="coin-change" style="color:${isUp?'#39ff14':'#ff00ff'}">${isUp?'▲':'▼'} ${Math.abs(coin.change).toFixed(2)}%</div>
+        <div class="coin-price" style="color:${isUp ? '#39ff14' : '#ff00ff'}">$${priceStr}</div>
+        <div class="coin-change" style="color:${isUp ? '#39ff14' : '#ff00ff'}">${isUp ? '▲' : '▼'} ${Math.abs(coin.change).toFixed(2)}%</div>
       </div>
     `;
   }).join('');
@@ -873,8 +904,8 @@ function setMarket(m) {
   state.price = coin.price;
   
   document.getElementById('baseAssetLabel').textContent = coin.name;
-  document.getElementById('submitBtn').textContent = `${state.side==='long'?'LONG':'SHORT'} ${coin.name}`;
-  document.getElementById('markPrice').textContent = '$' + coin.price.toFixed(coin.price < 1 ? 6 : 2);
+  document.getElementById('submitBtn').textContent = `${state.side === 'long' ? 'LONG' : 'SHORT'} ${coin.name}`;
+  document.getElementById('markPrice').textContent = '$' + (coin.price < 1 ? coin.price.toFixed(6) : coin.price.toFixed(2));
   document.getElementById('indexPrice').textContent = '$' + (coin.price * 0.9998).toFixed(coin.price < 1 ? 6 : 2);
   document.getElementById('fundingRate').textContent = coin.funding + ' / 8h';
   document.getElementById('openInterest').textContent = coin.oi;
@@ -888,12 +919,12 @@ function setMarket(m) {
 // ─── SIDE ─────────────────────────────────────────────────────────────────
 function setSide(s) {
   state.side = s;
-  document.getElementById('btnLong').className = 'side-btn long'+(s==='long'?' on':'');
-  document.getElementById('btnShort').className = 'side-btn short'+(s==='short'?' on':'');
+  document.getElementById('btnLong').className = 'side-btn long' + (s === 'long' ? ' on' : '');
+  document.getElementById('btnShort').className = 'side-btn short' + (s === 'short' ? ' on' : '');
   const coin = COINS[state.market];
   const btn = document.getElementById('submitBtn');
   btn.className = `submit-btn ${s}`;
-  btn.textContent = `${s==='long'?'LONG':'SHORT'} ${coin.name}`;
+  btn.textContent = `${s === 'long' ? 'LONG' : 'SHORT'} ${coin.name}`;
   recalc();
 }
 
@@ -901,7 +932,7 @@ function setSide(s) {
 function renderOtTabs() {
   const el = document.getElementById('otTabs');
   el.innerHTML = OT.map(t =>
-    `<button class="ot-tab${t===state.orderType?' on':''}" onclick="setOT('${t}')">${t}</button>`
+    `<button class="ot-tab${t === state.orderType ? ' on' : ''}" onclick="setOT('${t}')">${t}</button>`
   ).join('');
 }
 
@@ -909,8 +940,8 @@ function setOT(t) {
   state.orderType = t;
   renderOtTabs();
   const pg = document.getElementById('priceGroup');
-  pg.style.display = t==='Market' ? 'none' : 'block';
-  document.getElementById('priceLabel').textContent = t==='Stop' ? 'Trigger Price' : 'Limit Price';
+  pg.style.display = t === 'Market' ? 'none' : 'block';
+  document.getElementById('priceLabel').textContent = t === 'Stop' ? 'Trigger Price' : 'Limit Price';
   recalc();
 }
 
@@ -918,7 +949,7 @@ function setOT(t) {
 function renderLevRow() {
   const el = document.getElementById('levRow');
   el.innerHTML = LEVERAGES.map(l =>
-    `<button class="lev-btn${l===state.leverage?' on':''}" onclick="setLev(${l})">${l}×</button>`
+    `<button class="lev-btn${l === state.leverage ? ' on' : ''}" onclick="setLev(${l})">${l}×</button>`
   ).join('');
 }
 
@@ -930,15 +961,24 @@ function setLev(l) {
 
 // ─── RECALC STATS ─────────────────────────────────────────────────────────
 function recalc() {
-  const size = parseFloat(document.getElementById('sizeInput').value)||0;
-  const price = parseFloat(document.getElementById('priceInput').value)||state.price;
+  const size = parseFloat(document.getElementById('sizeInput').value) || 0;
+  const priceInput = parseFloat(document.getElementById('priceInput').value);
+  const price = (state.orderType !== 'Market' && priceInput) ? priceInput : state.price;
   const coin = COINS[state.market];
-  const notional = size && price ? `$${(size*price).toFixed(2)}` : '—';
-  const liq = size && price && state.leverage ?
-    (state.side==='long'
-      ? `$${(price*(1-1/state.leverage)).toFixed(coin.price < 1 ? 6 : 2)}`
-      : `$${(price*(1+1/state.leverage)).toFixed(coin.price < 1 ? 6 : 2)}`) : '—';
-  const margin = size && state.leverage ? `${(size/state.leverage).toFixed(coin.price < 1 ? 4 : 3)} ${coin.name}` : '—';
+  
+  const notional = size && price ? `$${(size * price).toFixed(2)}` : '—';
+  
+  let liq = '—';
+  if (size && price && state.leverage) {
+    if (state.side === 'long') {
+      liq = `$${(price * (1 - 1/state.leverage)).toFixed(coin.price < 1 ? 6 : 2)}`;
+    } else {
+      liq = `$${(price * (1 + 1/state.leverage)).toFixed(coin.price < 1 ? 6 : 2)}`;
+    }
+  }
+  
+  const margin = size && state.leverage ? `${(size / state.leverage).toFixed(coin.price < 1 ? 4 : 3)} ${coin.name}` : '—';
+  
   document.getElementById('statNotional').textContent = notional;
   document.getElementById('statLiq').textContent = liq;
   document.getElementById('statMargin').textContent = margin;
@@ -951,34 +991,59 @@ function togglePrivacy() {
   const lbl = document.getElementById('privLabel');
   const badge = document.getElementById('privBadge');
   const obTag = document.getElementById('obPrivTag');
+  
   btn.className = 'privacy-btn' + (state.privacy ? ' on' : '');
   lbl.textContent = state.privacy ? 'ARCIUM SHIELD: ON' : 'SHIELD: OFF';
   badge.className = 'priv-badge' + (state.privacy ? '' : ' hide');
   obTag.style.display = state.privacy ? '' : 'none';
+  
   renderPositions();
   renderOB();
   playSound('click');
 }
 
-// ─── SUBMIT ORDER ─────────────────────────────────────────────────────────
+// ═══════════════════════════════════════════════════════════════════════════
+// SUBMIT ORDER - FIXED VERSION
+// This now properly creates and adds positions to the state
+// ═══════════════════════════════════════════════════════════════════════════
 function submitOrder() {
-  const size = parseFloat(document.getElementById('sizeInput').value);
-  if (!size || size <= 0) {
+  const sizeInput = document.getElementById('sizeInput');
+  const priceInputEl = document.getElementById('priceInput');
+  const size = parseFloat(sizeInput.value);
+  
+  // Validation
+  if (!size || size <= 0 || isNaN(size)) {
     showToast('Please enter a valid position size', 'warn');
+    sizeInput.focus();
     return;
   }
   
   const btn = document.getElementById('submitBtn');
   btn.disabled = true;
   btn.textContent = state.privacy ? 'ENCRYPTING...' : 'PLACING...';
-
+  
+  // Simulate order processing delay
   setTimeout(() => {
     const coin = COINS[state.market];
-    const entryPrice = state.orderType === 'Limit' && document.getElementById('priceInput').value 
-      ? parseFloat(document.getElementById('priceInput').value)
-      : state.price;
     
-    // CREATE THE POSITION - THIS WAS MISSING!
+    // Determine entry price
+    let entryPrice;
+    if (state.orderType === 'Market') {
+      entryPrice = state.price;
+    } else {
+      const inputPrice = parseFloat(priceInputEl.value);
+      if (!inputPrice || inputPrice <= 0) {
+        showToast('Please enter a valid price', 'warn');
+        btn.disabled = false;
+        btn.textContent = `${state.side === 'long' ? 'LONG' : 'SHORT'} ${coin.name}`;
+        return;
+      }
+      entryPrice = inputPrice;
+    }
+    
+    // ═══════════════════════════════════════════════════════════════════════
+    // CREATE NEW POSITION - THIS IS THE FIX
+    // ═══════════════════════════════════════════════════════════════════════
     const newPosition = {
       id: state.nextPositionId++,
       market: state.market,
@@ -994,8 +1059,14 @@ function submitOrder() {
     // Add to positions array
     state.positions.push(newPosition);
     
+    console.log('Position created:', newPosition); // Debug log
+    console.log('Total positions:', state.positions.length); // Debug log
+    
+    // Reset button
     btn.disabled = false;
-    btn.textContent = `${state.side==='long'?'LONG':'SHORT'} ${coin.name}`;
+    btn.textContent = `${state.side === 'long' ? 'LONG' : 'SHORT'} ${coin.name}`;
+    
+    // Show success message
     const msg = state.privacy
       ? `✓ Encrypted ${state.side.toUpperCase()} position opened via Arcium MXE`
       : `✓ ${state.side.toUpperCase()} position opened`;
@@ -1003,11 +1074,13 @@ function submitOrder() {
     playSound('success');
     
     // Clear inputs
-    document.getElementById('sizeInput').value = '';
-    document.getElementById('priceInput').value = '';
+    sizeInput.value = '';
+    priceInputEl.value = '';
     recalc();
     
-    // Update UI
+    // ═══════════════════════════════════════════════════════════════════════
+    // UPDATE UI - THIS IS CRITICAL
+    // ═══════════════════════════════════════════════════════════════════════
     renderPosTabs();
     renderPositions();
     updatePnL();
@@ -1016,63 +1089,98 @@ function submitOrder() {
 }
 
 // ─── CHART WITH VOLUME ─────────────────────────────────────────────────────
-function genCandles(n=80) {
+function genCandles(n = 80) {
   let p = state.price;
-  return Array.from({length:n},(_,i)=>{
-    const o=p, c=o+(Math.random()-.48)*(p*0.01);
-    const h=Math.max(o,c)+Math.random()*(p*0.005), l=Math.min(o,c)-Math.random()*(p*0.005);
+  return Array.from({length: n}, (_, i) => {
+    const o = p;
+    const c = o + (Math.random() - 0.48) * (p * 0.01);
+    const h = Math.max(o, c) + Math.random() * (p * 0.005);
+    const l = Math.min(o, c) - Math.random() * (p * 0.005);
     const vol = Math.random() * 100;
-    p=c; return {o,c,h,l,vol};
+    p = c;
+    return {o, c, h, l, vol};
   });
 }
 
 function renderChart() {
   if (!state.candles.length) state.candles = genCandles();
+  
   const cv = document.getElementById('chart');
-  const dpr = window.devicePixelRatio||1;
-  const W = cv.offsetWidth||600, H = 280;
-  cv.width = W*dpr; cv.height = H*dpr;
-  cv.style.width='100%'; cv.style.height=H+'px';
+  const dpr = window.devicePixelRatio || 1;
+  const W = cv.offsetWidth || 600;
+  const H = 280;
+  
+  cv.width = W * dpr;
+  cv.height = H * dpr;
+  cv.style.width = '100%';
+  cv.style.height = H + 'px';
+  
   const ctx = cv.getContext('2d');
-  ctx.scale(dpr,dpr);
+  ctx.scale(dpr, dpr);
   
-  const grad = ctx.createLinearGradient(0,0,0,H);
-  grad.addColorStop(0,'#0a0a12');
-  grad.addColorStop(1,'#151520');
-  ctx.fillStyle=grad; ctx.fillRect(0,0,W,H);
+  // Background
+  const grad = ctx.createLinearGradient(0, 0, 0, H);
+  grad.addColorStop(0, '#0a0a12');
+  grad.addColorStop(1, '#151520');
+  ctx.fillStyle = grad;
+  ctx.fillRect(0, 0, W, H);
   
-  ctx.strokeStyle='rgba(0,212,255,0.08)'; ctx.lineWidth=1;
-  for(let i=1;i<6;i++){const y=H/6*i;ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke();}
+  // Grid lines
+  ctx.strokeStyle = 'rgba(0,212,255,0.08)';
+  ctx.lineWidth = 1;
+  for (let i = 1; i < 6; i++) {
+    const y = H / 6 * i;
+    ctx.beginPath();
+    ctx.moveTo(0, y);
+    ctx.lineTo(W, y);
+    ctx.stroke();
+  }
   
-  const prices = state.candles.flatMap(c=>[c.h,c.l]);
-  const minP=Math.min(...prices), maxP=Math.max(...prices), rng=maxP-minP, pad=10;
+  // Calculate scales
+  const prices = state.candles.flatMap(c => [c.h, c.l]);
+  const minP = Math.min(...prices);
+  const maxP = Math.max(...prices);
+  const rng = maxP - minP || 1;
+  const pad = 10;
   const volHeight = 40;
   const chartHeight = H - volHeight - pad * 2;
-  const toY=p=>pad+((maxP-p)/rng)*chartHeight;
-  const cw=(W-pad*2)/state.candles.length, bw=Math.max(2,cw*.6);
+  
+  const toY = p => pad + ((maxP - p) / rng) * chartHeight;
+  const cw = (W - pad * 2) / state.candles.length;
+  const bw = Math.max(2, cw * 0.6);
   
   // Draw candles
-  state.candles.forEach((c,i)=>{
-    const x=pad+i*cw+cw/2, o=toY(c.o), cl=toY(c.c), h=toY(c.h), l=toY(c.l);
-    const bull=c.c>=c.o;
-    const col=bull?'#39ff14':'#ff00ff';
-    const glow=bull?'rgba(57,255,20,0.3)':'rgba(255,0,255,0.3)';
+  state.candles.forEach((c, i) => {
+    const x = pad + i * cw + cw / 2;
+    const o = toY(c.o);
+    const cl = toY(c.c);
+    const h = toY(c.h);
+    const l = toY(c.l);
+    const bull = c.c >= c.o;
+    const col = bull ? '#39ff14' : '#ff00ff';
+    const glow = bull ? 'rgba(57,255,20,0.3)' : 'rgba(255,0,255,0.3)';
     
-    ctx.shadowBlur=8;
-    ctx.shadowColor=glow;
+    ctx.shadowBlur = 8;
+    ctx.shadowColor = glow;
     
-    ctx.strokeStyle=col; ctx.lineWidth=2;
-    ctx.beginPath(); ctx.moveTo(x,h); ctx.lineTo(x,l); ctx.stroke();
+    // Wick
+    ctx.strokeStyle = col;
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(x, h);
+    ctx.lineTo(x, l);
+    ctx.stroke();
     
-    ctx.fillStyle=col;
-    ctx.fillRect(x-bw/2,Math.min(o,cl),bw,Math.max(2,Math.abs(cl-o)));
+    // Body
+    ctx.fillStyle = col;
+    ctx.fillRect(x - bw / 2, Math.min(o, cl), bw, Math.max(2, Math.abs(cl - o)));
     
-    ctx.shadowBlur=0;
+    ctx.shadowBlur = 0;
     
     // Volume bars
     const volColor = bull ? 'rgba(57,255,20,0.3)' : 'rgba(255,0,255,0.3)';
     ctx.fillStyle = volColor;
-    ctx.fillRect(x - bw/2, H - volHeight, bw, (c.vol / 100) * (volHeight - 5));
+    ctx.fillRect(x - bw / 2, H - volHeight, bw, (c.vol / 100) * (volHeight - 5));
   });
   
   // Volume label
@@ -1080,99 +1188,162 @@ function renderChart() {
   ctx.font = '10px sans-serif';
   ctx.fillText('VOL', pad, H - volHeight + 12);
   
-  const last=state.candles[state.candles.length-1];
-  const first=state.candles[0].c;
-  const pct=((last.c-first)/first*100).toFixed(2);
+  // Update price display
+  const last = state.candles[state.candles.length - 1];
+  const first = state.candles[0].c;
+  const pct = ((last.c - first) / first * 100).toFixed(2);
   const coin = COINS[state.market];
-  document.getElementById('chartPrice').textContent='$'+last.c.toFixed(coin.price < 1 ? 6 : 2);
-  const pctEl=document.getElementById('chartPct');
-  pctEl.textContent=(pct>=0?'▲ ':'▼ ')+Math.abs(pct)+'%';
-  pctEl.className='pct-chg '+(pct>=0?'u':'d');
+  
+  document.getElementById('chartPrice').textContent = '$' + last.c.toFixed(coin.price < 1 ? 6 : 2);
+  const pctEl = document.getElementById('chartPct');
+  pctEl.textContent = (pct >= 0 ? '▲ ' : '▼ ') + Math.abs(pct) + '%';
+  pctEl.className = 'pct-chg ' + (pct >= 0 ? 'u' : 'd');
 }
 
 function renderTfTabs() {
-  const el=document.getElementById('tfTabs');
-  el.innerHTML=TFS.map(t=>`<button class="tf-btn${t===state.activeTf?' on':''}" onclick="setTf('${t}')">${t}</button>`).join('');
+  const el = document.getElementById('tfTabs');
+  el.innerHTML = TFS.map(t => 
+    `<button class="tf-btn${t === state.activeTf ? ' on' : ''}" onclick="setTf('${t}')">${t}</button>`
+  ).join('');
 }
 
-function setTf(t){state.activeTf=t;renderTfTabs();state.candles=[];renderChart();playSound('click');}
+function setTf(t) {
+  state.activeTf = t;
+  renderTfTabs();
+  state.candles = [];
+  renderChart();
+  playSound('click');
+}
 
-function tickPrice(){
+function tickPrice() {
   const coin = COINS[state.market];
   state.price *= (1 + (Math.random() - 0.49) * 0.002);
   coin.price = state.price;
   
-  // Update mark price for all positions
+  // Update mark price for all positions in this market
   state.positions.forEach(p => {
     if (p.market === state.market) {
       p.mark = state.price;
     }
   });
   
-  document.getElementById('markPrice').textContent='$'+state.price.toFixed(coin.price < 1 ? 6 : 2);
-  if(state.candles.length){
+  document.getElementById('markPrice').textContent = '$' + state.price.toFixed(coin.price < 1 ? 6 : 2);
+  
+  if (state.candles.length) {
     state.candles.push({
-      o:state.candles[state.candles.length-1].c,
-      c:state.price,
-      h:state.price+Math.random()*(state.price*0.003),
-      l:state.price-Math.random()*(state.price*0.003),
+      o: state.candles[state.candles.length - 1].c,
+      c: state.price,
+      h: state.price + Math.random() * (state.price * 0.003),
+      l: state.price - Math.random() * (state.price * 0.003),
       vol: Math.random() * 100
     });
-    if(state.candles.length>80)state.candles.shift();
+    if (state.candles.length > 80) state.candles.shift();
     renderChart();
   }
 }
 
-// ─── POSITIONS (AT TOP!) ──────────────────────────────────────────────────
-function renderPosTabs(){
-  const el=document.getElementById('posTabs');
-  el.innerHTML=POS_TABS.map(t=>`<div class="tab-it${t===state.posTab?' on':''}" onclick="setPosTab('${t}')">${t}${t==='Positions'&&state.positions.length?` (${state.positions.length})`:''}</div>`).join('');
+// ═══════════════════════════════════════════════════════════════════════════
+// POSITIONS RENDERING - CRITICAL FOR DISPLAYING POSITIONS
+// ═══════════════════════════════════════════════════════════════════════════
+function renderPosTabs() {
+  const el = document.getElementById('posTabs');
+  const posCount = state.positions.length;
+  
+  el.innerHTML = POS_TABS.map(t => {
+    let label = t;
+    if (t === 'Positions' && posCount > 0) {
+      label += ` (${posCount})`;
+    }
+    return `<div class="tab-it${t === state.posTab ? ' on' : ''}" onclick="setPosTab('${t}')">${label}</div>`;
+  }).join('');
 }
 
-function setPosTab(t){state.posTab=t;renderPosTabs();renderPositions();playSound('click');}
+function setPosTab(t) {
+  state.posTab = t;
+  renderPosTabs();
+  renderPositions();
+  playSound('click');
+}
 
-function renderPositions(){
-  const el=document.getElementById('posContent');
-  if(state.posTab==='Positions'){
-    if(!state.positions.length){el.innerHTML='<div class="empty">No open positions</div>';return;}
-    el.innerHTML=`<table class="pos-table">
-      <thead><tr>
-        <th>Market</th><th>Side</th><th>Size</th><th>Entry</th><th>Mark</th><th>Liq</th><th>PnL</th><th></th>
-      </tr></thead>
-      <tbody>${state.positions.map(p=>{
-        const liq=p.side==='long'?(p.entry*(1-1/p.lev)).toFixed(2):(p.entry*(1+1/p.lev)).toFixed(2);
-        const currentPnl = p.side === 'long' 
-          ? (p.mark - p.entry) * p.size 
-          : (p.entry - p.mark) * p.size;
-        const pnlHtml=state.privacy
-          ? `<div class="mask"><div class="mask-bar"></div><span style="font-size:10px;color:#00D4FF;font-weight:700">PRIVATE</span></div>`
-          : `<span style="color:${currentPnl>=0?'#39ff14':'#ff00ff'};font-weight:700">${currentPnl>=0?'+':''}$${currentPnl.toFixed(2)}</span>`;
-        return `<tr>
-          <td>${p.market}</td>
-          <td><span class="pbadge ${p.side}">${p.side==='long'?'LONG':'SHORT'} ${p.lev}×</span></td>
-          <td>${p.size}</td><td>$${p.entry.toFixed(2)}</td><td>$${p.mark.toFixed(2)}</td>
-          <td style="color:#ff00ff;text-shadow:0 0 8px rgba(255,0,255,0.3)">$${liq}</td>
-          <td>${pnlHtml}</td>
-          <td><button class="cls-btn" onclick="closePos(${p.id})" onmouseenter="showPnLPreview(${p.id},this)" onmouseleave="hidePnLPreview()">CLOSE</button></td>
-        </tr>`;
-      }).join('')}</tbody>
+function renderPositions() {
+  const el = document.getElementById('posContent');
+  
+  if (state.posTab === 'Positions') {
+    if (!state.positions.length) {
+      el.innerHTML = '<div class="empty">No open positions<br>Enter a size and click LONG or SHORT to open a position</div>';
+      return;
+    }
+    
+    el.innerHTML = `<table class="pos-table">
+      <thead>
+        <tr>
+          <th>Market</th>
+          <th>Side</th>
+          <th>Size</th>
+          <th>Entry</th>
+          <th>Mark</th>
+          <th>Liq</th>
+          <th>PnL</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        ${state.positions.map(p => {
+          // Calculate liquidation price
+          const liq = p.side === 'long' 
+            ? (p.entry * (1 - 1/p.lev)).toFixed(2)
+            : (p.entry * (1 + 1/p.lev)).toFixed(2);
+          
+          // Calculate current PnL
+          const currentPnl = p.side === 'long' 
+            ? (p.mark - p.entry) * p.size 
+            : (p.entry - p.mark) * p.size;
+          
+          // Format PnL display based on privacy mode
+          let pnlHtml;
+          if (state.privacy) {
+            pnlHtml = `<div class="mask"><div class="mask-bar"></div><span style="font-size:10px;color:#00D4FF;font-weight:700">PRIVATE</span></div>`;
+          } else {
+            const pnlColor = currentPnl >= 0 ? '#39ff14' : '#ff00ff';
+            const pnlSign = currentPnl >= 0 ? '+' : '';
+            pnlHtml = `<span style="color:${pnlColor};font-weight:700">${pnlSign}$${currentPnl.toFixed(2)}</span>`;
+          }
+          
+          return `
+            <tr>
+              <td>${p.market}</td>
+              <td><span class="pbadge ${p.side}">${p.side.toUpperCase()} ${p.lev}×</span></td>
+              <td>${p.size}</td>
+              <td>$${p.entry.toFixed(2)}</td>
+              <td>$${p.mark.toFixed(2)}</td>
+              <td style="color:#ff00ff;text-shadow:0 0 8px rgba(255,0,255,0.3)">$${liq}</td>
+              <td>${pnlHtml}</td>
+              <td><button class="cls-btn" onclick="closePos(${p.id})" onmouseenter="showPnLPreview(${p.id}, this)" onmouseleave="hidePnLPreview()">CLOSE</button></td>
+            </tr>
+          `;
+        }).join('')}
+      </tbody>
     </table>`;
-  } else if(state.posTab==='Open Orders'){
-    el.innerHTML=`<div class="empty">${state.privacy?'⚡ Orders encrypted via Arcium MXE — no on-chain footprint until filled':'No open orders'}</div>`;
+    
+  } else if (state.posTab === 'Open Orders') {
+    el.innerHTML = `<div class="empty">${state.privacy ? '⚡ Orders encrypted via Arcium MXE — no on-chain footprint until filled' : 'No open orders'}</div>`;
   } else {
-    el.innerHTML='<div class="empty">Connect wallet to view history</div>';
+    el.innerHTML = '<div class="empty">Connect wallet to view history</div>';
   }
 }
 
 function showPnLPreview(posId, btn) {
   const pos = state.positions.find(p => p.id === posId);
   if (!pos) return;
+  
   const pnl = pos.side === 'long' 
     ? (pos.mark - pos.entry) * pos.size 
     : (pos.entry - pos.mark) * pos.size;
+  
   const preview = document.getElementById('pnlPreview');
   const rect = btn.getBoundingClientRect();
-  preview.innerHTML = `Est. PnL: <span style="color:${pnl>=0?'#39ff14':'#ff00ff'}">${pnl>=0?'+':''}$${pnl.toFixed(2)}</span>`;
+  
+  preview.innerHTML = `Est. PnL: <span style="color:${pnl >= 0 ? '#39ff14' : '#ff00ff'}">${pnl >= 0 ? '+' : ''}$${pnl.toFixed(2)}</span>`;
   preview.style.left = rect.left + 'px';
   preview.style.top = (rect.top - 35) + 'px';
   preview.classList.add('show');
@@ -1182,61 +1353,65 @@ function hidePnLPreview() {
   document.getElementById('pnlPreview').classList.remove('show');
 }
 
-function closePos(id){
-  state.positions=state.positions.filter(p=>p.id!==id);
+function closePos(id) {
+  state.positions = state.positions.filter(p => p.id !== id);
   renderPosTabs();
   renderPositions();
   updatePnL();
   playSound('click');
-  showToast('Position closed · Settlement via Arcium MXE','inf');
+  showToast('Position closed · Settlement via Arcium MXE', 'inf');
 }
 
 // ─── ORDER BOOK ───────────────────────────────────────────────────────────
-function genLevels(mid,n,isBid){
-  return Array.from({length:n},(_,i)=>{
-    const d=isBid?-(i+1)*(mid*0.0003):(i+1)*(mid*0.0003);
-    const px=(mid+d).toFixed(mid < 1 ? 8 : 2);
-    const sz=(Math.random()*8+.5).toFixed(2);
-    const tot=(parseFloat(sz)*parseFloat(px)).toFixed(0);
-    return {px,sz,tot};
+function genLevels(mid, n, isBid) {
+  return Array.from({length: n}, (_, i) => {
+    const d = isBid ? -(i + 1) * (mid * 0.0003) : (i + 1) * (mid * 0.0003);
+    const px = (mid + d).toFixed(mid < 1 ? 8 : 2);
+    const sz = (Math.random() * 8 + 0.5).toFixed(2);
+    const tot = (parseFloat(sz) * parseFloat(px)).toFixed(0);
+    return {px, sz, tot};
   });
 }
 
-function renderOB(){
-  const asks=genLevels(state.price,10,false);
-  const bids=genLevels(state.price,10,true);
-  const maxT=Math.max(...asks.map(a=>+a.tot),...bids.map(b=>+b.tot));
-  const spread=(+asks[0].px - +bids[0].px).toFixed(state.price < 1 ? 8 : 3);
-  document.getElementById('spread').textContent='Spread: '+spread;
+function renderOB() {
+  const asks = genLevels(state.price, 10, false);
+  const bids = genLevels(state.price, 10, true);
+  const maxT = Math.max(...asks.map(a => +a.tot), ...bids.map(b => +b.tot));
+  const spread = (+asks[0].px - +bids[0].px).toFixed(state.price < 1 ? 8 : 3);
+  
+  document.getElementById('spread').textContent = 'Spread: ' + spread;
 
-  const row=(r,cls)=>`<div class="ob-row ${cls}">
-    <div class="depth" style="width:${(+r.tot/maxT*100).toFixed(1)}%"></div>
-    <span class="px">${r.px}</span>
-    <span style="color:var(--muted)">${state.privacy?`<span class="blur-val">${r.sz}</span>`:r.sz}</span>
-    <span style="color:var(--muted);text-align:right">${state.privacy?`<span class="blur-val">$${r.tot}</span>`:'$'+r.tot}</span>
-  </div>`;
+  const row = (r, cls) => `
+    <div class="ob-row ${cls}">
+      <div class="depth" style="width:${(+r.tot / maxT * 100).toFixed(1)}%"></div>
+      <span class="px">${r.px}</span>
+      <span style="color:var(--muted)">${state.privacy ? `<span class="blur-val">${r.sz}</span>` : r.sz}</span>
+      <span style="color:var(--muted);text-align:right">${state.privacy ? `<span class="blur-val">$${r.tot}</span>` : '$' + r.tot}</span>
+    </div>
+  `;
 
-  document.getElementById('asks').innerHTML=[...asks].reverse().map(r=>row(r,'ask')).join('');
-  document.getElementById('bids').innerHTML=bids.map(r=>row(r,'bid')).join('');
+  document.getElementById('asks').innerHTML = [...asks].reverse().map(r => row(r, 'ask')).join('');
+  document.getElementById('bids').innerHTML = bids.map(r => row(r, 'bid')).join('');
 }
 
 // ─── CIRCUIT VIS ──────────────────────────────────────────────────────────
-let activeCircuit=0;
-function renderCircuit(){
-  const el=document.getElementById('cFlow');
-  el.innerHTML=CIRCUIT_STEPS.map((s,i)=>`
+let activeCircuit = 0;
+
+function renderCircuit() {
+  const el = document.getElementById('cFlow');
+  el.innerHTML = CIRCUIT_STEPS.map((s, i) => `
     <div>
-      <div class="c-step${i===activeCircuit?'':' dim'}" id="cs${i}">
+      <div class="c-step${i === activeCircuit ? '' : ' dim'}" id="cs${i}">
         <div class="c-ico ${s.cls}">${s.ico}</div>
         <div class="c-lbl"><strong>${s.label}</strong><br>${s.detail}</div>
       </div>
-      ${i<CIRCUIT_STEPS.length-1?'<div class="c-arr"></div>':''}
+      ${i < CIRCUIT_STEPS.length - 1 ? '<div class="c-arr"></div>' : ''}
     </div>
   `).join('');
 }
 
-function tickCircuit(){
-  activeCircuit=(activeCircuit+1)%CIRCUIT_STEPS.length;
+function tickCircuit() {
+  activeCircuit = (activeCircuit + 1) % CIRCUIT_STEPS.length;
   renderCircuit();
 }
 
@@ -1253,23 +1428,29 @@ function closeProfile(e) {
 }
 
 function goHome() {
-  window.scrollTo({top:0,behavior:'smooth'});
+  window.scrollTo({top: 0, behavior: 'smooth'});
 }
 
 // ─── TOAST ────────────────────────────────────────────────────────────────
-function showToast(msg,type){
-  const el=document.getElementById('toast');
-  const t=document.createElement('div');
-  t.className='toast '+type;
-  t.textContent=msg;
+function showToast(msg, type) {
+  const el = document.getElementById('toast');
+  const t = document.createElement('div');
+  t.className = 'toast ' + type;
+  t.textContent = msg;
   el.appendChild(t);
-  setTimeout(()=>{t.style.animation='fadeOut 0.3s ease forwards';setTimeout(()=>t.remove(),300);},3000);
+  
+  setTimeout(() => {
+    t.style.animation = 'fadeOut 0.3s ease forwards';
+    setTimeout(() => t.remove(), 300);
+  }, 3000);
 }
 
 // ─── BOOT ─────────────────────────────────────────────────────────────────
-init();
-renderTfTabs();
-window.addEventListener('resize',()=>{state.candles=[];renderChart();});
+document.addEventListener('DOMContentLoaded', init);
+window.addEventListener('resize', () => {
+  state.candles = [];
+  renderChart();
+});
 </script>
 </body>
 </html>
