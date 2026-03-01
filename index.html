@@ -322,6 +322,7 @@ canvas{display:block;width:100%}
   .pos-table th,.pos-table td{padding:6px}
 }
 </style>
+<base target="_blank">
 </head>
 <body>
 
@@ -556,7 +557,7 @@ canvas{display:block;width:100%}
     <div class="profile-role">Crypto Trader & DeFi Enthusiast</div>
     
     <div class="social-links">
-      <a href="https://twitter.com/husnain50376345" target="_blank" class="social-link twitter">
+      <a href="https://twitter.com/husnain50376345 " target="_blank" class="social-link twitter">
         <div class="social-icon">🐦</div>
         <div class="social-info">
           <div class="social-label">Twitter / X</div>
@@ -565,7 +566,7 @@ canvas{display:block;width:100%}
         <div class="social-arrow">→</div>
       </a>
       
-      <a href="https://discord.com/users/shah0406" target="_blank" class="social-link discord">
+      <a href="https://discord.com/users/shah0406 " target="_blank" class="social-link discord">
         <div class="social-icon">💬</div>
         <div class="social-info">
           <div class="social-label">Discord</div>
@@ -641,7 +642,8 @@ let state = {
   candles: [],
   price: 186.42,
   alerts: [],
-  theme: 'cyberpunk'
+  theme: 'cyberpunk',
+  nextPositionId: 3
 };
 
 const COINS = {
@@ -751,7 +753,12 @@ function handleKeyboard(e) {
 
 // ─── PnL WIDGET ────────────────────────────────────────────────────────────
 function updatePnL() {
-  const total = state.positions.reduce((sum, p) => sum + p.pnl, 0);
+  const total = state.positions.reduce((sum, p) => {
+    const currentPnl = p.side === 'long' 
+      ? (p.mark - p.entry) * p.size 
+      : (p.entry - p.mark) * p.size;
+    return sum + currentPnl;
+  }, 0);
   const el = document.getElementById('pnlTotal');
   el.textContent = (total >= 0 ? '+' : '') + '$' + total.toFixed(2);
   el.className = 'pnl-total ' + (total >= 0 ? 'positive' : 'negative');
@@ -956,22 +963,55 @@ function togglePrivacy() {
 // ─── SUBMIT ORDER ─────────────────────────────────────────────────────────
 function submitOrder() {
   const size = parseFloat(document.getElementById('sizeInput').value);
-  if (!size) return;
+  if (!size || size <= 0) {
+    showToast('Please enter a valid position size', 'warn');
+    return;
+  }
+  
   const btn = document.getElementById('submitBtn');
   btn.disabled = true;
   btn.textContent = state.privacy ? 'ENCRYPTING...' : 'PLACING...';
 
   setTimeout(() => {
     const coin = COINS[state.market];
+    const entryPrice = state.orderType === 'Limit' && document.getElementById('priceInput').value 
+      ? parseFloat(document.getElementById('priceInput').value)
+      : state.price;
+    
+    // CREATE THE POSITION - THIS WAS MISSING!
+    const newPosition = {
+      id: state.nextPositionId++,
+      market: state.market,
+      side: state.side,
+      size: size,
+      entry: entryPrice,
+      mark: state.price,
+      lev: state.leverage,
+      pnl: 0,
+      pct: 0
+    };
+    
+    // Add to positions array
+    state.positions.push(newPosition);
+    
     btn.disabled = false;
     btn.textContent = `${state.side==='long'?'LONG':'SHORT'} ${coin.name}`;
     const msg = state.privacy
-      ? `✓ Encrypted ${state.side.toUpperCase()} order submitted via Arcium MXE`
-      : `✓ ${state.side.toUpperCase()} order placed`;
+      ? `✓ Encrypted ${state.side.toUpperCase()} position opened via Arcium MXE`
+      : `✓ ${state.side.toUpperCase()} position opened`;
     showToast(msg, 'ok');
     playSound('success');
+    
+    // Clear inputs
     document.getElementById('sizeInput').value = '';
+    document.getElementById('priceInput').value = '';
     recalc();
+    
+    // Update UI
+    renderPosTabs();
+    renderPositions();
+    updatePnL();
+    
   }, state.privacy ? 900 : 400);
 }
 
@@ -1061,6 +1101,14 @@ function tickPrice(){
   const coin = COINS[state.market];
   state.price *= (1 + (Math.random() - 0.49) * 0.002);
   coin.price = state.price;
+  
+  // Update mark price for all positions
+  state.positions.forEach(p => {
+    if (p.market === state.market) {
+      p.mark = state.price;
+    }
+  });
+  
   document.getElementById('markPrice').textContent='$'+state.price.toFixed(coin.price < 1 ? 6 : 2);
   if(state.candles.length){
     state.candles.push({
