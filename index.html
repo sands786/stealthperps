@@ -33,7 +33,6 @@
 @keyframes glitch{0%{transform:translate(0)}20%{transform:translate(-2px,2px)}40%{transform:translate(-2px,-2px)}60%{transform:translate(2px,2px)}80%{transform:translate(2px,-2px)}100%{transform:translate(0)}}
 @keyframes float{0%{transform:translateY(100vh) rotate(0deg);opacity:0}10%{opacity:1}90%{opacity:1}100%{transform:translateY(-100vh) rotate(720deg);opacity:0}}
 @keyframes scan{0%{top:-10%}100%{top:110%}}
-@keyframes pulse-ring{0%{transform:scale(0.8);opacity:1}100%{transform:scale(2);opacity:0}}
 
 html,body{height:100%;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;font-size:14px;overflow-x:hidden}
 
@@ -56,12 +55,10 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 
 .hsp{flex:1}
 
-/* Connection Status */
 .conn-status{display:flex;align-items:center;gap:8px;font-size:11px;font-weight:600;padding:6px 12px;border-radius:20px;background:rgba(57,255,20,0.1);border:1px solid rgba(57,255,20,0.3);color:#39ff14}
 .conn-status.disconnected{background:rgba(255,0,255,0.1);border-color:rgba(255,0,255,0.3);color:#ff00ff}
 .status-dot{width:8px;height:8px;border-radius:50%;background:currentColor;animation:pulse 1.5s ease-in-out infinite}
 
-/* PnL Widget */
 .pnl-widget{display:flex;flex-direction:column;align-items:flex-end;margin-right:16px;padding:6px 14px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius)}
 .pnl-total{font-size:18px;font-weight:800;font-family:monospace}
 .pnl-total.positive{color:#39ff14;text-shadow:0 0 10px rgba(57,255,20,0.5)}
@@ -77,7 +74,6 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 .profile-btn{display:flex;align-items:center;gap:8px;font-size:11px;font-weight:600;letter-spacing:1px;color:var(--neon-purple);cursor:pointer;padding:8px 14px;border-radius:var(--radius);border:1px solid var(--neon-purple);background:rgba(184,41,221,0.1);transition:all 0.2s;text-transform:uppercase}
 .profile-btn:hover{background:rgba(184,41,221,0.2);box-shadow:0 0 20px rgba(184,41,221,0.4);transform:translateY(-1px)}
 
-/* Theme Toggle */
 .theme-toggle{display:flex;align-items:center;gap:6px;padding:6px 10px;background:var(--surface);border:1px solid var(--border);border-radius:20px;margin-right:10px}
 .theme-btn{width:16px;height:16px;border-radius:50%;border:2px solid transparent;cursor:pointer;transition:all 0.2s}
 .theme-btn:hover{transform:scale(1.2)}
@@ -167,9 +163,41 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 .fi-v.p{color:var(--neon-lime);text-shadow:0 0 8px rgba(57,255,20,0.5)}
 .fi-v.n{color:var(--neon-pink);text-shadow:0 0 8px rgba(255,0,255,0.5)}
 
-/* POSITIONS PANEL - AT TOP NOW */
+/* CHART SECTION - NOW AT TOP */
+.chart-wrap{border-bottom:1px solid var(--border)}
+.chart-hdr{display:flex;align-items:center;gap:12px;padding:12px 16px;border-bottom:1px solid var(--border);flex-wrap:wrap}
+.live-dot{width:8px;height:8px;border-radius:50%;background:var(--neon-lime);animation:blink 1s ease-in-out infinite;box-shadow:0 0 15px var(--neon-lime)}
+.price-big{font-size:24px;font-weight:800;background:linear-gradient(90deg,var(--neon-cyan),var(--neon-lime));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.pct-chg{font-size:12px;font-weight:700}
+.pct-chg.u{color:var(--neon-lime);text-shadow:0 0 10px rgba(57,255,20,0.5)}
+.pct-chg.d{color:var(--neon-pink);text-shadow:0 0 10px rgba(255,0,255,0.5)}
+.tfs{display:flex;gap:3px;margin-left:auto}
+.tf-btn{padding:4px 8px;font-size:11px;border-radius:3px;cursor:pointer;color:var(--muted);border:none;background:none;transition:all 0.2s;font-weight:600}
+.tf-btn:hover{color:var(--neon-cyan)}
+.tf-btn.on{color:var(--neon-cyan);background:rgba(0,212,255,0.15);box-shadow:0 0 10px rgba(0,212,255,0.2)}
+
+/* INDICATOR TOGGLES */
+.indicator-bar{display:flex;gap:6px;padding:8px 16px;background:var(--surface);border-bottom:1px solid var(--border);flex-wrap:wrap;align-items:center}
+.indicator-bar span{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-right:8px}
+.ind-btn{padding:4px 10px;font-size:10px;font-weight:600;border-radius:3px;cursor:pointer;border:1px solid var(--border);background:var(--bg);color:var(--muted);transition:all 0.2s}
+.ind-btn:hover{border-color:var(--neon-cyan);color:var(--neon-cyan)}
+.ind-btn.on{border-color:var(--neon-purple);color:var(--neon-purple);background:rgba(184,41,221,0.15);box-shadow:0 0 10px rgba(184,41,221,0.3)}
+.ind-btn.ma7.on{border-color:#ff00ff;color:#ff00ff}
+.ind-btn.ma25.on{border-color:#00D4FF;color:#00D4FF}
+.ind-btn.ma99.on{border-color:#ffff00;color:#ffff00}
+.ind-btn.bb.on{border-color:#ff6600;color:#ff6600}
+
+/* RSI PANEL */
+.rsi-panel{height:80px;border-bottom:1px solid var(--border);position:relative;background:var(--bg)}
+.rsi-label{position:absolute;top:4px;left:8px;font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;z-index:10}
+.rsi-value{position:absolute;top:4px;right:8px;font-size:11px;font-weight:700;font-family:monospace;z-index:10}
+.rsi-value.overbought{color:var(--neon-pink)}
+.rsi-value.oversold{color:var(--neon-lime)}
+.rsi-value.neutral{color:var(--neon-cyan)}
+
+/* POSITIONS PANEL - NOW BELOW CHART */
 .pos-panel{border-bottom:1px solid var(--border)}
-.tab-row{display:flex;border-bottom:1px solid var(--border)}
+.tab-row{display:flex;border-bottom:1px solid var(--border);background:var(--surface)}
 .tab-it{padding:12px 16px;font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;transition:all 0.2s;white-space:nowrap}
 .tab-it.on{color:var(--neon-cyan);border-bottom-color:var(--neon-cyan);text-shadow:0 0 10px rgba(0,212,255,0.5)}
 .tab-it:hover{color:var(--text)}
@@ -194,18 +222,6 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 
 .empty{padding:32px 16px;text-align:center;color:var(--muted);font-size:12px;line-height:1.6;letter-spacing:1px}
 
-/* CHART */
-.chart-wrap{border-bottom:1px solid var(--border)}
-.chart-hdr{display:flex;align-items:center;gap:12px;padding:12px 16px;border-bottom:1px solid var(--border)}
-.live-dot{width:8px;height:8px;border-radius:50%;background:var(--neon-lime);animation:blink 1s ease-in-out infinite;box-shadow:0 0 15px var(--neon-lime)}
-.price-big{font-size:24px;font-weight:800;background:linear-gradient(90deg,var(--neon-cyan),var(--neon-lime));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-.pct-chg{font-size:12px;font-weight:700}
-.pct-chg.u{color:var(--neon-lime);text-shadow:0 0 10px rgba(57,255,20,0.5)}
-.pct-chg.d{color:var(--neon-pink);text-shadow:0 0 10px rgba(255,0,255,0.5)}
-.tfs{display:flex;gap:3px;margin-left:auto}
-.tf-btn{padding:4px 8px;font-size:11px;border-radius:3px;cursor:pointer;color:var(--muted);border:none;background:none;transition:all 0.2s;font-weight:600}
-.tf-btn:hover{color:var(--neon-cyan)}
-.tf-btn.on{color:var(--neon-cyan);background:rgba(0,212,255,0.15);box-shadow:0 0 10px rgba(0,212,255,0.2)}
 canvas{display:block;width:100%}
 
 /* SHIELD WIDGET */
@@ -320,6 +336,7 @@ canvas{display:block;width:100%}
   .pnl-widget,.conn-status{display:none}
   .pos-table{font-size:10px}
   .pos-table th,.pos-table td{padding:6px}
+  .indicator-bar{overflow-x:auto;flex-wrap:nowrap}
 }
 </style>
 <base target="_blank">
@@ -341,19 +358,16 @@ canvas{display:block;width:100%}
   
   <div class="hsp"></div>
   
-  <!-- Connection Status -->
   <div class="conn-status" id="connStatus">
     <div class="status-dot"></div>
     <span>Connected to Solana</span>
   </div>
   
-  <!-- PnL Widget -->
   <div class="pnl-widget" id="pnlWidget">
     <div class="pnl-total positive" id="pnlTotal">+$58.70</div>
     <div class="pnl-label">Total Unrealized PnL</div>
   </div>
   
-  <!-- Theme Toggle -->
   <div class="theme-toggle">
     <div class="theme-btn theme-cyber active" onclick="setTheme('cyberpunk')" title="Cyberpunk"></div>
     <div class="theme-btn theme-matrix" onclick="setTheme('matrix')" title="Matrix"></div>
@@ -379,7 +393,6 @@ canvas{display:block;width:100%}
 
   <!-- LEFT: Trading Panel -->
   <div class="panel-col">
-    <!-- Coin Selector -->
     <div class="sec">
       <div class="sec-title">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg>
@@ -388,7 +401,6 @@ canvas{display:block;width:100%}
       <div class="coin-grid" id="coinGrid"></div>
     </div>
 
-    <!-- Trade Form -->
     <div class="sec">
       <div class="sec-title">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
@@ -430,7 +442,6 @@ canvas{display:block;width:100%}
       <button class="submit-btn long" id="submitBtn" onclick="submitOrder()">LONG SOL</button>
     </div>
 
-    <!-- Market Info -->
     <div class="sec">
       <div class="sec-title">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
@@ -443,7 +454,6 @@ canvas{display:block;width:100%}
       <div class="fi-row"><span class="fi-l">Index Price</span><span class="fi-v" id="indexPrice">$186.39</span></div>
     </div>
     
-    <!-- Keyboard Shortcuts -->
     <div class="shortcuts-section">
       <div class="shortcuts-title">⌨️ Keyboard Shortcuts</div>
       <div class="shortcuts-grid">
@@ -452,22 +462,15 @@ canvas{display:block;width:100%}
         <div class="shortcut-item"><span>Market Order</span><span class="shortcut-key">M</span></div>
         <div class="shortcut-item"><span>Toggle Privacy</span><span class="shortcut-key">P</span></div>
         <div class="shortcut-item"><span>Leverage 2×</span><span class="shortcut-key">1</span></div>
-        <div class="shortcut-item"><span>Leverage 5×</span><span class="shortcut-key">2</span></div>
         <div class="shortcut-item"><span>Leverage 10×</span><span class="shortcut-key">3</span></div>
-        <div class="shortcut-item"><span>Leverage 20×</span><span class="shortcut-key">4</span></div>
       </div>
     </div>
   </div>
 
-  <!-- CENTER: Positions (AT TOP) + Chart -->
+  <!-- CENTER: CHART AT TOP, POSITIONS BELOW -->
   <div class="panel-col">
-    <!-- POSITIONS PANEL - NOW AT TOP -->
-    <div class="pos-panel">
-      <div class="tab-row" id="posTabs"></div>
-      <div class="pos-content" id="posContent"></div>
-    </div>
-
-    <!-- Chart -->
+    
+    <!-- CHART SECTION - NOW AT TOP -->
     <div class="chart-wrap">
       <div class="chart-hdr">
         <div class="live-dot"></div>
@@ -475,13 +478,38 @@ canvas{display:block;width:100%}
         <div class="pct-chg u" id="chartPct">▲ 1.24%</div>
         <div class="tfs" id="tfTabs"></div>
       </div>
-      <canvas id="chart" height="280"></canvas>
+      
+      <!-- INDICATOR TOGGLES -->
+      <div class="indicator-bar">
+        <span>Indicators:</span>
+        <button class="ind-btn ma7" id="indMA7" onclick="toggleIndicator('ma7')">MA7</button>
+        <button class="ind-btn ma25" id="indMA25" onclick="toggleIndicator('ma25')">MA25</button>
+        <button class="ind-btn ma99" id="indMA99" onclick="toggleIndicator('ma99')">MA99</button>
+        <button class="ind-btn bb" id="indBB" onclick="toggleIndicator('bb')">Bollinger</button>
+        <button class="ind-btn" id="indRSI" onclick="toggleIndicator('rsi')">RSI</button>
+        <button class="ind-btn" id="indVol" onclick="toggleIndicator('vol')">Volume</button>
+      </div>
+      
+      <!-- MAIN CHART CANVAS -->
+      <canvas id="chart" height="320"></canvas>
+      
+      <!-- RSI PANEL (hidden by default) -->
+      <div class="rsi-panel" id="rsiPanel" style="display:none">
+        <span class="rsi-label">RSI (14)</span>
+        <span class="rsi-value neutral" id="rsiValue">50.00</span>
+        <canvas id="rsiChart" height="80"></canvas>
+      </div>
+    </div>
+
+    <!-- POSITIONS PANEL - NOW BELOW CHART -->
+    <div class="pos-panel">
+      <div class="tab-row" id="posTabs"></div>
+      <div class="pos-content" id="posContent"></div>
     </div>
   </div>
 
   <!-- RIGHT: Shield + Order Book + Alerts -->
   <div class="panel-col">
-    <!-- Arcium Shield Widget -->
     <div class="shield-w">
       <div class="shield-ico-wrap">
         <div class="shield-ico">
@@ -501,7 +529,6 @@ canvas{display:block;width:100%}
       <div class="arcium-badge">Powered by <span>Arcium</span> MXE · Confidential Computing</div>
     </div>
 
-    <!-- Order Book Imbalance -->
     <div class="imbalance-section">
       <div class="imbalance-title">
         <span>Buy/Sell Pressure</span>
@@ -513,7 +540,6 @@ canvas{display:block;width:100%}
       </div>
     </div>
 
-    <!-- Order Book -->
     <div class="sec" style="padding-top:12px">
       <div class="ob-header">
         <div class="sec-title" style="margin:0">
@@ -528,7 +554,6 @@ canvas{display:block;width:100%}
       <div id="bids"></div>
     </div>
     
-    <!-- Price Alerts -->
     <div class="alert-section">
       <div class="alert-title">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
@@ -543,10 +568,8 @@ canvas{display:block;width:100%}
   </div>
 </div>
 
-<!-- PnL Preview Tooltip -->
 <div class="pnl-preview" id="pnlPreview"></div>
 
-<!-- PROFILE MODAL -->
 <div class="modal-overlay" id="profileModal" onclick="closeProfile(event)">
   <div class="modal" onclick="event.stopPropagation()">
     <button class="modal-close" onclick="closeProfile()">&times;</button>
@@ -592,13 +615,10 @@ canvas{display:block;width:100%}
 
 <script>
 // ═══════════════════════════════════════════════════════════════════════════
-// STEALTHPERPS - FIXED VERSION
-// Position creation now properly adds to state.positions array
+// STEALTHPERPS V2 - CHART AT TOP, POSITIONS BELOW, WITH TECHNICAL INDICATORS
 // ═══════════════════════════════════════════════════════════════════════════
 
-// ─── AUDIO CONTEXT FOR SOUND EFFECTS ───────────────────────────────────────
 let audioCtx = null;
-
 function initAudio() {
   if (!audioCtx) {
     audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -618,23 +638,20 @@ function playSound(type) {
     osc.frequency.exponentialRampToValueAtTime(400, audioCtx.currentTime + 0.1);
     gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
     gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
-    osc.start();
-    osc.stop(audioCtx.currentTime + 0.1);
+    osc.start(); osc.stop(audioCtx.currentTime + 0.1);
   } else if (type === 'success') {
     osc.frequency.setValueAtTime(400, audioCtx.currentTime);
     osc.frequency.exponentialRampToValueAtTime(800, audioCtx.currentTime + 0.2);
     gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
     gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
-    osc.start();
-    osc.stop(audioCtx.currentTime + 0.3);
+    osc.start(); osc.stop(audioCtx.currentTime + 0.3);
   } else if (type === 'alert') {
     osc.frequency.setValueAtTime(600, audioCtx.currentTime);
     osc.frequency.setValueAtTime(800, audioCtx.currentTime + 0.1);
     osc.frequency.setValueAtTime(600, audioCtx.currentTime + 0.2);
     gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
     gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.4);
-    osc.start();
-    osc.stop(audioCtx.currentTime + 0.4);
+    osc.start(); osc.stop(audioCtx.currentTime + 0.4);
   }
 }
 
@@ -655,7 +672,16 @@ const state = {
   price: 186.42,
   alerts: [],
   theme: 'cyberpunk',
-  nextPositionId: 3
+  nextPositionId: 3,
+  // INDICATOR STATES
+  indicators: {
+    ma7: false,
+    ma25: false,
+    ma99: false,
+    bb: false,
+    rsi: false,
+    vol: true  // Volume on by default
+  }
 };
 
 const COINS = {
@@ -702,8 +728,8 @@ function init() {
   renderPositions();
   updatePnL();
   loadAlerts();
+  updateIndicatorButtons();
   
-  // Start intervals
   setInterval(() => {
     tickPrice();
     renderOB();
@@ -715,10 +741,7 @@ function init() {
   setInterval(tickCircuit, 1800);
   setInterval(simulateConnection, 5000);
   
-  // Keyboard shortcuts
   document.addEventListener('keydown', handleKeyboard);
-  
-  // Initialize audio on first user interaction
   document.addEventListener('click', initAudio, {once:true});
 }
 
@@ -733,6 +756,129 @@ function createParticles() {
     p.style.animationDuration = (10 + Math.random() * 10) + 's';
     container.appendChild(p);
   }
+}
+
+// ─── INDICATOR FUNCTIONS ──────────────────────────────────────────────────
+function toggleIndicator(ind) {
+  state.indicators[ind] = !state.indicators[ind];
+  updateIndicatorButtons();
+  renderChart();
+  playSound('click');
+  
+  // Show/hide RSI panel
+  if (ind === 'rsi') {
+    document.getElementById('rsiPanel').style.display = state.indicators.rsi ? 'block' : 'none';
+  }
+}
+
+function updateIndicatorButtons() {
+  Object.keys(state.indicators).forEach(ind => {
+    const btn = document.getElementById('ind' + ind.toUpperCase());
+    if (btn) {
+      btn.className = 'ind-btn ' + ind + (state.indicators[ind] ? ' on' : '');
+    }
+  });
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// TECHNICAL INDICATOR CALCULATIONS
+// ═══════════════════════════════════════════════════════════════════════════
+
+// Simple Moving Average
+function calculateSMA(data, period) {
+  const sma = [];
+  for (let i = 0; i < data.length; i++) {
+    if (i < period - 1) {
+      sma.push(null);
+    } else {
+      let sum = 0;
+      for (let j = 0; j < period; j++) {
+        sum += data[i - j].c;
+      }
+      sma.push(sum / period);
+    }
+  }
+  return sma;
+}
+
+// Exponential Moving Average
+function calculateEMA(data, period) {
+  const ema = [];
+  const multiplier = 2 / (period + 1);
+  
+  for (let i = 0; i < data.length; i++) {
+    if (i < period - 1) {
+      ema.push(null);
+    } else if (i === period - 1) {
+      let sum = 0;
+      for (let j = 0; j < period; j++) {
+        sum += data[i - j].c;
+      }
+      ema.push(sum / period);
+    } else {
+      ema.push((data[i].c - ema[i - 1]) * multiplier + ema[i - 1]);
+    }
+  }
+  return ema;
+}
+
+// Bollinger Bands
+function calculateBollingerBands(data, period = 20, stdDev = 2) {
+  const middle = calculateSMA(data, period);
+  const upper = [];
+  const lower = [];
+  
+  for (let i = 0; i < data.length; i++) {
+    if (i < period - 1) {
+      upper.push(null);
+      lower.push(null);
+    } else {
+      let sum = 0;
+      for (let j = 0; j < period; j++) {
+        sum += Math.pow(data[i - j].c - middle[i], 2);
+      }
+      const std = Math.sqrt(sum / period);
+      upper.push(middle[i] + stdDev * std);
+      lower.push(middle[i] - stdDev * std);
+    }
+  }
+  return { middle, upper, lower };
+}
+
+// RSI (Relative Strength Index)
+function calculateRSI(data, period = 14) {
+  const rsi = [];
+  let gains = 0, losses = 0;
+  
+  for (let i = 1; i <= period; i++) {
+    const change = data[i].c - data[i - 1].c;
+    if (change > 0) gains += change;
+    else losses -= change;
+  }
+  
+  let avgGain = gains / period;
+  let avgLoss = losses / period;
+  
+  for (let i = period; i < data.length; i++) {
+    const change = data[i].c - data[i - 1].c;
+    if (change > 0) {
+      avgGain = (avgGain * (period - 1) + change) / period;
+      avgLoss = (avgLoss * (period - 1)) / period;
+    } else {
+      avgGain = (avgGain * (period - 1)) / period;
+      avgLoss = (avgLoss * (period - 1) - change) / period;
+    }
+    
+    const rs = avgLoss === 0 ? 100 : avgGain / avgLoss;
+    rsi.push(100 - (100 / (1 + rs)));
+  }
+  
+  // Pad with nulls
+  while (rsi.length < data.length) {
+    rsi.unshift(null);
+  }
+  
+  return rsi;
 }
 
 // ─── THEME SYSTEM ──────────────────────────────────────────────────────────
@@ -805,18 +951,14 @@ function loadAlerts() {
   try {
     const saved = localStorage.getItem('stealthAlerts');
     if (saved) state.alerts = JSON.parse(saved);
-  } catch(e) {
-    console.log('localStorage not available');
-  }
+  } catch(e) {}
   renderAlerts();
 }
 
 function saveAlerts() {
   try {
     localStorage.setItem('stealthAlerts', JSON.stringify(state.alerts));
-  } catch(e) {
-    console.log('localStorage not available');
-  }
+  } catch(e) {}
 }
 
 function addAlert() {
@@ -1002,16 +1144,12 @@ function togglePrivacy() {
   playSound('click');
 }
 
-// ═══════════════════════════════════════════════════════════════════════════
-// SUBMIT ORDER - FIXED VERSION
-// This now properly creates and adds positions to the state
-// ═══════════════════════════════════════════════════════════════════════════
+// ─── SUBMIT ORDER ─────────────────────────────────────────────────────────
 function submitOrder() {
   const sizeInput = document.getElementById('sizeInput');
   const priceInputEl = document.getElementById('priceInput');
   const size = parseFloat(sizeInput.value);
   
-  // Validation
   if (!size || size <= 0 || isNaN(size)) {
     showToast('Please enter a valid position size', 'warn');
     sizeInput.focus();
@@ -1022,11 +1160,9 @@ function submitOrder() {
   btn.disabled = true;
   btn.textContent = state.privacy ? 'ENCRYPTING...' : 'PLACING...';
   
-  // Simulate order processing delay
   setTimeout(() => {
     const coin = COINS[state.market];
     
-    // Determine entry price
     let entryPrice;
     if (state.orderType === 'Market') {
       entryPrice = state.price;
@@ -1041,9 +1177,6 @@ function submitOrder() {
       entryPrice = inputPrice;
     }
     
-    // ═══════════════════════════════════════════════════════════════════════
-    // CREATE NEW POSITION - THIS IS THE FIX
-    // ═══════════════════════════════════════════════════════════════════════
     const newPosition = {
       id: state.nextPositionId++,
       market: state.market,
@@ -1056,31 +1189,20 @@ function submitOrder() {
       pct: 0
     };
     
-    // Add to positions array
     state.positions.push(newPosition);
     
-    console.log('Position created:', newPosition); // Debug log
-    console.log('Total positions:', state.positions.length); // Debug log
-    
-    // Reset button
     btn.disabled = false;
     btn.textContent = `${state.side === 'long' ? 'LONG' : 'SHORT'} ${coin.name}`;
-    
-    // Show success message
     const msg = state.privacy
       ? `✓ Encrypted ${state.side.toUpperCase()} position opened via Arcium MXE`
       : `✓ ${state.side.toUpperCase()} position opened`;
     showToast(msg, 'ok');
     playSound('success');
     
-    // Clear inputs
     sizeInput.value = '';
     priceInputEl.value = '';
     recalc();
     
-    // ═══════════════════════════════════════════════════════════════════════
-    // UPDATE UI - THIS IS CRITICAL
-    // ═══════════════════════════════════════════════════════════════════════
     renderPosTabs();
     renderPositions();
     updatePnL();
@@ -1088,18 +1210,23 @@ function submitOrder() {
   }, state.privacy ? 900 : 400);
 }
 
-// ─── CHART WITH VOLUME ─────────────────────────────────────────────────────
-function genCandles(n = 80) {
+// ═══════════════════════════════════════════════════════════════════════════
+// CHART WITH TECHNICAL INDICATORS
+// ═══════════════════════════════════════════════════════════════════════════
+
+function genCandles(n = 100) {
   let p = state.price;
-  return Array.from({length: n}, (_, i) => {
+  const candles = [];
+  for (let i = 0; i < n; i++) {
     const o = p;
-    const c = o + (Math.random() - 0.48) * (p * 0.01);
-    const h = Math.max(o, c) + Math.random() * (p * 0.005);
-    const l = Math.min(o, c) - Math.random() * (p * 0.005);
-    const vol = Math.random() * 100;
+    const c = o + (Math.random() - 0.48) * (p * 0.015);
+    const h = Math.max(o, c) + Math.random() * (p * 0.008);
+    const l = Math.min(o, c) - Math.random() * (p * 0.008);
+    const vol = Math.random() * 100 + 20;
     p = c;
-    return {o, c, h, l, vol};
-  });
+    candles.push({o, c, h, l, vol});
+  }
+  return candles;
 }
 
 function renderChart() {
@@ -1108,7 +1235,7 @@ function renderChart() {
   const cv = document.getElementById('chart');
   const dpr = window.devicePixelRatio || 1;
   const W = cv.offsetWidth || 600;
-  const H = 280;
+  const H = 320;
   
   cv.width = W * dpr;
   cv.height = H * dpr;
@@ -1125,29 +1252,72 @@ function renderChart() {
   ctx.fillStyle = grad;
   ctx.fillRect(0, 0, W, H);
   
-  // Grid lines
-  ctx.strokeStyle = 'rgba(0,212,255,0.08)';
+  // Calculate dimensions
+  const hasRSI = state.indicators.rsi;
+  const rsiHeight = hasRSI ? 0 : 0; // RSI is separate panel now
+  const volHeight = state.indicators.vol ? 50 : 0;
+  const chartHeight = H - volHeight - 20;
+  
+  const prices = state.candles.flatMap(c => [c.h, c.l]);
+  const minP = Math.min(...prices);
+  const maxP = Math.max(...prices);
+  const rng = maxP - minP || 1;
+  const pad = 10;
+  
+  const toY = p => pad + ((maxP - p) / rng) * (chartHeight - pad * 2);
+  const cw = (W - pad * 2) / state.candles.length;
+  const bw = Math.max(2, cw * 0.7);
+  
+  // Draw grid lines
+  ctx.strokeStyle = 'rgba(0,212,255,0.05)';
   ctx.lineWidth = 1;
   for (let i = 1; i < 6; i++) {
-    const y = H / 6 * i;
+    const y = pad + (chartHeight - pad * 2) / 6 * i;
     ctx.beginPath();
     ctx.moveTo(0, y);
     ctx.lineTo(W, y);
     ctx.stroke();
   }
   
-  // Calculate scales
-  const prices = state.candles.flatMap(c => [c.h, c.l]);
-  const minP = Math.min(...prices);
-  const maxP = Math.max(...prices);
-  const rng = maxP - minP || 1;
-  const pad = 10;
-  const volHeight = 40;
-  const chartHeight = H - volHeight - pad * 2;
+  // Calculate indicators
+  const ma7 = state.indicators.ma7 ? calculateEMA(state.candles, 7) : null;
+  const ma25 = state.indicators.ma25 ? calculateEMA(state.candles, 25) : null;
+  const ma99 = state.indicators.ma99 ? calculateEMA(state.candles, 99) : null;
+  const bb = state.indicators.bb ? calculateBollingerBands(state.candles, 20, 2) : null;
   
-  const toY = p => pad + ((maxP - p) / rng) * chartHeight;
-  const cw = (W - pad * 2) / state.candles.length;
-  const bw = Math.max(2, cw * 0.6);
+  // Draw Bollinger Bands (behind candles)
+  if (bb) {
+    ctx.fillStyle = 'rgba(255,102,0,0.08)';
+    ctx.beginPath();
+    let started = false;
+    for (let i = 0; i < state.candles.length; i++) {
+      if (bb.upper[i] !== null) {
+        const x = pad + i * cw + cw / 2;
+        const y = toY(bb.upper[i]);
+        if (!started) { ctx.moveTo(x, y); started = true; }
+        else ctx.lineTo(x, y);
+      }
+    }
+    for (let i = state.candles.length - 1; i >= 0; i--) {
+      if (bb.lower[i] !== null) {
+        const x = pad + i * cw + cw / 2;
+        const y = toY(bb.lower[i]);
+        ctx.lineTo(x, y);
+      }
+    }
+    ctx.closePath();
+    ctx.fill();
+    
+    // BB lines
+    drawLine(ctx, bb.upper, toY, W, pad, cw, '#ff6600', 1);
+    drawLine(ctx, bb.middle, toY, W, pad, cw, '#ffaa00', 1);
+    drawLine(ctx, bb.lower, toY, W, pad, cw, '#ff6600', 1);
+  }
+  
+  // Draw Moving Averages (behind candles)
+  if (ma99) drawLine(ctx, ma99, toY, W, pad, cw, '#ffff00', 1.5);
+  if (ma25) drawLine(ctx, ma25, toY, W, pad, cw, '#00D4FF', 1.5);
+  if (ma7) drawLine(ctx, ma7, toY, W, pad, cw, '#ff00ff', 1.5);
   
   // Draw candles
   state.candles.forEach((c, i) => {
@@ -1160,12 +1330,12 @@ function renderChart() {
     const col = bull ? '#39ff14' : '#ff00ff';
     const glow = bull ? 'rgba(57,255,20,0.3)' : 'rgba(255,0,255,0.3)';
     
-    ctx.shadowBlur = 8;
+    ctx.shadowBlur = 6;
     ctx.shadowColor = glow;
     
     // Wick
     ctx.strokeStyle = col;
-    ctx.lineWidth = 2;
+    ctx.lineWidth = 1.5;
     ctx.beginPath();
     ctx.moveTo(x, h);
     ctx.lineTo(x, l);
@@ -1173,20 +1343,29 @@ function renderChart() {
     
     // Body
     ctx.fillStyle = col;
-    ctx.fillRect(x - bw / 2, Math.min(o, cl), bw, Math.max(2, Math.abs(cl - o)));
+    const bodyHeight = Math.max(1.5, Math.abs(cl - o));
+    ctx.fillRect(x - bw / 2, Math.min(o, cl), bw, bodyHeight);
     
     ctx.shadowBlur = 0;
-    
-    // Volume bars
-    const volColor = bull ? 'rgba(57,255,20,0.3)' : 'rgba(255,0,255,0.3)';
-    ctx.fillStyle = volColor;
-    ctx.fillRect(x - bw / 2, H - volHeight, bw, (c.vol / 100) * (volHeight - 5));
   });
   
-  // Volume label
-  ctx.fillStyle = 'rgba(138,138,176,0.5)';
-  ctx.font = '10px sans-serif';
-  ctx.fillText('VOL', pad, H - volHeight + 12);
+  // Draw Volume
+  if (state.indicators.vol) {
+    const maxVol = Math.max(...state.candles.map(c => c.vol));
+    state.candles.forEach((c, i) => {
+      const x = pad + i * cw + cw / 2;
+      const bull = c.c >= c.o;
+      const volColor = bull ? 'rgba(57,255,20,0.4)' : 'rgba(255,0,255,0.4)';
+      ctx.fillStyle = volColor;
+      const volH = (c.vol / maxVol) * (volHeight - 5);
+      ctx.fillRect(x - bw / 2, H - volHeight, bw, volH);
+    });
+    
+    // Volume label
+    ctx.fillStyle = 'rgba(138,138,176,0.5)';
+    ctx.font = '9px sans-serif';
+    ctx.fillText('VOL', pad, H - volHeight + 10);
+  }
   
   // Update price display
   const last = state.candles[state.candles.length - 1];
@@ -1198,6 +1377,108 @@ function renderChart() {
   const pctEl = document.getElementById('chartPct');
   pctEl.textContent = (pct >= 0 ? '▲ ' : '▼ ') + Math.abs(pct) + '%';
   pctEl.className = 'pct-chg ' + (pct >= 0 ? 'u' : 'd');
+  
+  // Render RSI if enabled
+  if (hasRSI) {
+    renderRSI();
+  }
+}
+
+// Helper function to draw indicator lines
+function drawLine(ctx, data, toY, W, pad, cw, color, width) {
+  ctx.strokeStyle = color;
+  ctx.lineWidth = width;
+  ctx.lineJoin = 'round';
+  ctx.beginPath();
+  let started = false;
+  
+  for (let i = 0; i < data.length; i++) {
+    if (data[i] !== null) {
+      const x = pad + i * cw + cw / 2;
+      const y = toY(data[i]);
+      if (!started) {
+        ctx.moveTo(x, y);
+        started = true;
+      } else {
+        ctx.lineTo(x, y);
+      }
+    }
+  }
+  ctx.stroke();
+}
+
+// Render RSI Panel
+function renderRSI() {
+  const rsiCanvas = document.getElementById('rsiChart');
+  const rsiValues = calculateRSI(state.candles, 14);
+  const currentRSI = rsiValues[rsiValues.length - 1];
+  
+  // Update RSI value display
+  const rsiValueEl = document.getElementById('rsiValue');
+  rsiValueEl.textContent = currentRSI ? currentRSI.toFixed(2) : '50.00';
+  
+  if (currentRSI > 70) rsiValueEl.className = 'rsi-value overbought';
+  else if (currentRSI < 30) rsiValueEl.className = 'rsi-value oversold';
+  else rsiValueEl.className = 'rsi-value neutral';
+  
+  const dpr = window.devicePixelRatio || 1;
+  const W = rsiCanvas.offsetWidth || 600;
+  const H = 80;
+  
+  rsiCanvas.width = W * dpr;
+  rsiCanvas.height = H * dpr;
+  rsiCanvas.style.width = '100%';
+  rsiCanvas.style.height = H + 'px';
+  
+  const ctx = rsiCanvas.getContext('2d');
+  ctx.scale(dpr, dpr);
+  
+  // Background
+  ctx.fillStyle = '#0a0a12';
+  ctx.fillRect(0, 0, W, H);
+  
+  // Grid lines at 30, 50, 70
+  ctx.strokeStyle = 'rgba(255,255,255,0.1)';
+  ctx.lineWidth = 1;
+  ctx.setLineDash([2, 2]);
+  
+  [30, 50, 70].forEach(level => {
+    const y = H - (level / 100) * H;
+    ctx.beginPath();
+    ctx.moveTo(0, y);
+    ctx.lineTo(W, y);
+    ctx.stroke();
+  });
+  ctx.setLineDash([]);
+  
+  // Overbought/Oversold zones
+  ctx.fillStyle = 'rgba(255,0,255,0.08)';
+  ctx.fillRect(0, 0, W, H * 0.3);
+  ctx.fillStyle = 'rgba(57,255,20,0.08)';
+  ctx.fillRect(0, H * 0.7, W, H * 0.3);
+  
+  // Draw RSI line
+  const pad = 5;
+  const cw = (W - pad * 2) / rsiValues.length;
+  
+  ctx.strokeStyle = '#00D4FF';
+  ctx.lineWidth = 1.5;
+  ctx.beginPath();
+  let started = false;
+  
+  for (let i = 0; i < rsiValues.length; i++) {
+    if (rsiValues[i] !== null) {
+      const x = pad + i * cw + cw / 2;
+      const y = H - (rsiValues[i] / 100) * H;
+      if (!started) {
+        ctx.moveTo(x, y);
+        started = true;
+      } else {
+        ctx.lineTo(x, y);
+      }
+    }
+  }
+  ctx.stroke();
 }
 
 function renderTfTabs() {
@@ -1220,7 +1501,6 @@ function tickPrice() {
   state.price *= (1 + (Math.random() - 0.49) * 0.002);
   coin.price = state.price;
   
-  // Update mark price for all positions in this market
   state.positions.forEach(p => {
     if (p.market === state.market) {
       p.mark = state.price;
@@ -1233,18 +1513,16 @@ function tickPrice() {
     state.candles.push({
       o: state.candles[state.candles.length - 1].c,
       c: state.price,
-      h: state.price + Math.random() * (state.price * 0.003),
-      l: state.price - Math.random() * (state.price * 0.003),
-      vol: Math.random() * 100
+      h: state.price + Math.random() * (state.price * 0.005),
+      l: state.price - Math.random() * (state.price * 0.005),
+      vol: Math.random() * 100 + 20
     });
-    if (state.candles.length > 80) state.candles.shift();
+    if (state.candles.length > 100) state.candles.shift();
     renderChart();
   }
 }
 
-// ═══════════════════════════════════════════════════════════════════════════
-// POSITIONS RENDERING - CRITICAL FOR DISPLAYING POSITIONS
-// ═══════════════════════════════════════════════════════════════════════════
+// ─── POSITIONS ─────────────────────────────────────────────────────────────
 function renderPosTabs() {
   const el = document.getElementById('posTabs');
   const posCount = state.positions.length;
@@ -1289,17 +1567,14 @@ function renderPositions() {
       </thead>
       <tbody>
         ${state.positions.map(p => {
-          // Calculate liquidation price
           const liq = p.side === 'long' 
             ? (p.entry * (1 - 1/p.lev)).toFixed(2)
             : (p.entry * (1 + 1/p.lev)).toFixed(2);
           
-          // Calculate current PnL
           const currentPnl = p.side === 'long' 
             ? (p.mark - p.entry) * p.size 
             : (p.entry - p.mark) * p.size;
           
-          // Format PnL display based on privacy mode
           let pnlHtml;
           if (state.privacy) {
             pnlHtml = `<div class="mask"><div class="mask-bar"></div><span style="font-size:10px;color:#00D4FF;font-weight:700">PRIVATE</span></div>`;
